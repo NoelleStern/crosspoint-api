@@ -2,8 +2,8 @@
 use wasm_bindgen::prelude::*;
 
 use url::Url;
-use serde::Serialize;
-use std::path::{Path, PathBuf};
+use serde::{Deserialize, Serialize};
+use std::{net::Ipv4Addr, path::{Path, PathBuf}};
 
 use crate::{error::Error, Result, filesystem::{RemoteFile, safe_join}, transport::Transport};
 
@@ -14,6 +14,27 @@ pub struct CrossPointClient {
     /// Native uses "reqwest" and Web uses "gloo-net"
     transport: Transport,
 }
+
+/// Device info
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Device {
+    /// Firmware version
+    version: String,
+    /// Device IP address
+    ip: Ipv4Addr,
+    /// "STA" for joined Wi-Fi or "AP" for hotspot mode
+    mode: String,
+    /// Signal strength in dBm; 0 in AP mode
+    rssi: i32,
+    /// Free heap in bytes
+    #[serde(rename = "freeHeap")]
+    free_heap: u32,
+    /// Seconds since boot
+    uptime: u64,
+    /// Device name
+    device: String,
+}
+
 // Common
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
 impl CrossPointClient {
@@ -27,7 +48,14 @@ impl CrossPointClient {
 // Internal
 impl CrossPointClient {
     /// Equivalent of:
-    ///    http://crosspoint.local/api/files?path={dir}
+    ///    curl http://crosspoint.local/api/status
+    async fn status_internal(&self) -> Result<Device> {
+        self.transport
+            .get_json("api/status", &[])
+            .await
+    }
+    /// Equivalent of:
+    ///    curl http://crosspoint.local/api/files?path={dir}
     async fn list_internal<T: AsRef<str>>(&self, dir: T) -> Result<Vec<RemoteFile>> {
         self.transport
             .get_json("api/files", &[("path", dir.as_ref())])
@@ -111,7 +139,7 @@ impl CrossPointClient {
             .await
     }
     /// Equivalent of:
-    ///    http://crosspoint.local/download?path={path}
+    ///    curl http://crosspoint.local/download?path={path}
     async fn download_internal<T: AsRef<str>>(&self, path: T) -> Result<Vec<u8>> {
         self.transport
             .get_bytes(
@@ -124,6 +152,9 @@ impl CrossPointClient {
 // Expose to native
 #[cfg(not(target_arch = "wasm32"))]
 impl CrossPointClient {
+    pub async fn status(&self) -> Result<Device> {
+        self.status_internal().await
+    }
     pub async fn list<T: AsRef<str>>(&self, dir: T) -> Result<Vec<RemoteFile>> {
         self.list_internal(dir).await
     }
@@ -150,6 +181,9 @@ impl CrossPointClient {
 #[cfg(target_arch = "wasm32")]
 #[wasm_bindgen]
 impl CrossPointClient {
+    pub async fn status(&self) -> Result<Device> {
+        self.status_internal().await
+    }
     pub async fn list(&self, dir: String) -> Result<JsValue> {
         let files = self.list_internal(dir).await?;
         let js_array = serde_wasm_bindgen::to_value(&files)

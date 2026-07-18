@@ -1,10 +1,15 @@
 {
     "cSpell.words": [
         "bindgen",
+        "cdylib",
         "crosspoint",
         "gloo",
+        "hotspot",
+        "OPDS",
         "reqwest",
+        "rlib",
         "rsplit",
+        "rssi",
         "serde",
         "thiserror",
         "Xteink"
