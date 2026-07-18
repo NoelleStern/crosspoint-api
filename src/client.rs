@@ -8,14 +8,8 @@ use std::{net::Ipv4Addr, path::{Path, PathBuf}};
 use crate::{error::Error, Result, filesystem::{RemoteFile, safe_join}, transport::Transport};
 
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
-pub struct CrossPointClient {
-    /// Transport depends on the platform
-    /// Native uses "reqwest" and Web uses "gloo-net"
-    transport: Transport,
-}
-
 /// Device info
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Device {
     /// Firmware version
@@ -33,6 +27,13 @@ pub struct Device {
     uptime: u64,
     /// Device name
     device: String,
+}
+
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
+pub struct CrossPointClient {
+    /// Transport depends on the platform
+    /// Native uses "reqwest" and Web uses "gloo-net"
+    transport: Transport,
 }
 
 // Common
