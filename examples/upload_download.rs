@@ -45,7 +45,7 @@ async fn main() -> crosspoint_api::Result<()> {
     println!("> Test folder deleted");
 
     // // Or we could have force-deleted the folder instead
-    // client.force_delete_directory(TEST_DIR).await?;
+    // client.force_delete_directory(TEST_DIR.to_owned()).await?;
 
     // Done!
     println!("> Test finished successfully!");
