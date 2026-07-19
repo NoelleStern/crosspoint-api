@@ -61,7 +61,7 @@ npm i crosspoint-api
 
 | Endpoint               | HTTP Method | Wrapper Function                    | Description                                           |
 | ---------------------- | :---------: | ----------------------------------- | ----------------------------------------------------- |
-| <kbd>/api/status</kbd> | `GET`       | <kbd>status(dir)</kbd>              | *Returns device status*                               |
+| <kbd>/api/status</kbd> | `GET`       | <kbd>status()</kbd>                 | *Returns device status*                               |
 | <kbd>/api/files</kbd>  | `GET`       | <kbd>list(dir)</kbd>                | *Lists files and directories in the target directory* |
 | <kbd>/mkdir</kbd>      | `POST`      | <kbd>mkdir(dir)</kbd>               | *Create a new directory*                              |
 | <kbd>/delete</kbd>     | `POST`      | <kbd>delete(filepath)</kbd>         | *Deletes a file or an empty directory*                |
