@@ -1,6 +1,5 @@
 //! 
-//! Creates a temporary directory, uploads a file
-//! in there, downloads it back and then deletes it all
+//! Uploads a file, renames it and deletes it
 //! 
 //! Run with:
 //!    cargo run --example rename
