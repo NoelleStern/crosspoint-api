@@ -33,7 +33,7 @@ This crate is an unofficial implementation of the CrossPoint custom firmware HTT
   - [x] 🗑️ Delete
   - [x] ⬆️ Upload
   - [x] ⬇️ Download
-  - [ ] 🏷️ Rename
+  - [x] 🏷️ Rename
   - [ ] 📦 Move
 - 🛠️ **Configuration:**
   - [ ] ⚙️ Settings
@@ -65,8 +65,9 @@ npm i crosspoint-api
 | <kbd>/api/files</kbd>  | `GET`       | <kbd>list(dir)</kbd>                | *Lists files and directories in the target directory* |
 | <kbd>/mkdir</kbd>      | `POST`      | <kbd>mkdir(dir)</kbd>               | *Create a new directory*                              |
 | <kbd>/delete</kbd>     | `POST`      | <kbd>delete(filepath)</kbd>         | *Deletes a file or an empty directory*                |
-| <kbd>/upload</kbd>     | `POST`      | <kbd>upload(dir, name, bytes)</kbd> | *Upload a file to the device*                         |
-| <kbd>/download</kbd>   | `GET`       | <kbd>download(filepath)</kbd>       | *Download a file from the device*                     |
+| <kbd>/upload</kbd>     | `POST`      | <kbd>upload(dir, name, bytes)</kbd> | *Uploads a file to the SD card*                       |
+| <kbd>/download</kbd>   | `GET`       | <kbd>download(filepath)</kbd>       | *Downloads a file from the SD card*                   |
+| <kbd>/rename</kbd>     | `POST`      | <kbd>rename(filepath, name)</kbd>   | *Renames a file*                                      |
 
 ---
 

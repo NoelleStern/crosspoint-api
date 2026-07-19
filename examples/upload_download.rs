@@ -21,27 +21,27 @@ async fn main() -> crosspoint_api::Result<()> {
     let client: CrossPointClient = CrossPointClient::new(None)?;
 
     // Create a test directory
-    client.mkdir(TEST_DIR).await?;
+    client.mkdir(TEST_DIR.to_owned()).await?;
     println!("> Test folder created");
 
     // Upload test file to the test directory
-    client.upload(TEST_DIR, TEST_FILE, TEST_TEXT.as_bytes()).await?;
-    let files = client.list(TEST_DIR).await?;
+    client.upload(TEST_DIR.to_owned(), TEST_FILE.to_owned(), TEST_TEXT.as_bytes()).await?;
+    let files = client.list(TEST_DIR.to_owned()).await?;
     println!("> Test file uploaded: {files:#?}");
 
     // Read the file back
-    let bytes = client.download(&file_path).await?;
+    let bytes = client.download(file_path.to_owned()).await?;
     match str::from_utf8(&bytes) {
         Ok(v) => println!("> Test file downloaded: \"{v}\""),
         Err(e) => panic!("Invalid UTF-8 sequence: {}", e),
     };
   
     // Delete the file
-    client.delete(&file_path).await?;
+    client.delete(file_path.to_owned()).await?;
     println!("> Test file deleted");
 
     // Delete the folder (Doesn't work if non-empty)
-    client.delete(TEST_DIR).await?;
+    client.delete(TEST_DIR.to_owned()).await?;
     println!("> Test folder deleted");
 
     // // Or we could have force-deleted the folder instead

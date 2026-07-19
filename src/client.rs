@@ -49,14 +49,14 @@ impl CrossPointClient {
 // Internal
 impl CrossPointClient {
     /// Equivalent of:
-    ///    curl http://crosspoint.local/api/status
+    ///    curl "http://crosspoint.local/api/status"
     async fn status_internal(&self) -> Result<Device> {
         self.transport
             .get_json("api/status", &[])
             .await
     }
     /// Equivalent of:
-    ///    curl http://crosspoint.local/api/files?path={dir}
+    ///    curl "http://crosspoint.local/api/files?path={dir}"
     async fn list_internal<T: AsRef<str>>(&self, dir: T) -> Result<Vec<RemoteFile>> {
         self.transport
             .get_json("api/files", &[("path", dir.as_ref())])
@@ -140,12 +140,26 @@ impl CrossPointClient {
             .await
     }
     /// Equivalent of:
-    ///    curl http://crosspoint.local/download?path={path}
+    ///    curl -OJ "http://crosspoint.local/download?path={path}"
     async fn download_internal<T: AsRef<str>>(&self, path: T) -> Result<Vec<u8>> {
         self.transport
             .get_bytes(
                 "download",
                 &[("path", path.as_ref())],
+            )
+            .await
+    }
+    /// Equivalent of:
+    ///    curl -X POST "http://crosspoint.local/rename" -d "path=/{path}&name={name}"
+    async fn rename_internal<T: AsRef<str>, U: AsRef<str>>(&self, path: T, name: U) -> Result<()> {
+        self.transport
+            .post_form(
+                "rename",
+                &[],
+                &[
+                    ("path", path.as_ref()),
+                    ("name", name.as_ref())
+                ],
             )
             .await
     }
@@ -176,6 +190,9 @@ impl CrossPointClient {
     }
     pub async fn download<T: AsRef<str>>(&self, path: T) -> Result<Vec<u8>> {
         self.download_internal(path).await
+    }
+    pub async fn rename<T: AsRef<str>, U: AsRef<str>>(&self, path: T, name: U) -> Result<()> {
+        self.rename_internal(path, name).await
     }
 }
 // Expose to web
@@ -211,5 +228,8 @@ impl CrossPointClient {
     }
     pub async fn download(&self, path: String) -> Result<Vec<u8>> {
         self.download_internal(path).await
+    }
+    pub async fn rename(&self, path: String, name: String) -> Result<()> {
+        self.rename_internal(path, name).await
     }
 }
