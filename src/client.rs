@@ -150,7 +150,7 @@ impl CrossPointClient {
             .await
     }
     /// Equivalent of:
-    ///    curl -X POST "http://crosspoint.local/rename" -d "path=/{path}&name={name}"
+    ///    curl -X POST "http://crosspoint.local/rename" -d "path={path}" -d "name={name}"
     async fn rename_internal<T: AsRef<str>, U: AsRef<str>>(&self, path: T, name: U) -> Result<()> {
         self.transport
             .post_form(
@@ -159,6 +159,20 @@ impl CrossPointClient {
                 &[
                     ("path", path.as_ref()),
                     ("name", name.as_ref())
+                ],
+            )
+            .await
+    }
+    /// Equivalent of:
+    ///    curl -X POST "http://crosspoint.local/move" -d "path={path}" -d "dest={dest}"
+    async fn move_internal<T: AsRef<str>, U: AsRef<str>>(&self, path: T, dest: U) -> Result<()> {
+        self.transport
+            .post_form(
+                "move",
+                &[],
+                &[
+                    ("path", path.as_ref()),
+                    ("dest", dest.as_ref())
                 ],
             )
             .await
@@ -193,6 +207,9 @@ impl CrossPointClient {
     }
     pub async fn rename<T: AsRef<str>, U: AsRef<str>>(&self, path: T, name: U) -> Result<()> {
         self.rename_internal(path, name).await
+    }
+    pub async fn r#move<T: AsRef<str>, U: AsRef<str>>(&self, path: T, dest: U) -> Result<()> {
+        self.move_internal(path, dest).await
     }
 }
 // Expose to web
@@ -231,5 +248,8 @@ impl CrossPointClient {
     }
     pub async fn rename(&self, path: String, name: String) -> Result<()> {
         self.rename_internal(path, name).await
+    }
+    pub async fn r#move(&self, path: String, dest: String) -> Result<()> {
+        self.move_internal(path, dest).await
     }
 }
